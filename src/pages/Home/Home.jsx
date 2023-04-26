@@ -4,15 +4,15 @@ import { useState, useEffect } from 'react';
 
 const Home = () => {
   const [movies, setMovies] = useState([
-    // {
-    //   id: 0,
-    //   poster_path: null,
-    //   title: '',
-    //   original_title: '',
-    //   release_date: '',
-    //   vote_average: 0,
-    //   vote_count: 0,
-    // },
+    {
+      id: 0,
+      poster_path: null,
+      title: '',
+      original_title: '',
+      release_date: '',
+      vote_average: 0,
+      vote_count: 0,
+    },
   ]);
   const [error, setError] = useState(null);
 
