@@ -10,41 +10,27 @@ const Movies = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const movieName = searchParams.get('query') ?? '';
   const [movie, setMovie] = useState(() => {
-    return (
-      JSON.parse(window.localStorage.getItem('movieSearch')) ?? {
-        page: 0,
-        results: [],
-        total_results: 0,
-        total_pages: 0,
-      }
-    );
+    return JSON.parse(window.localStorage.getItem('movieSearch')) ?? {};
   });
-  // const [movie, setMovie] = useState([]);
 
   useEffect(() => {
     window.localStorage.setItem('movieSearch', JSON.stringify(movie));
   }, [movie]);
 
-  // useEffect(() => {
-  //   window.localStorage.setItem(
-  //     'movieSearch',
-  //     JSON.stringify({ page: 0, results: [], total_results: 0, total_pages: 0 })
-  //   );
-  // }, []);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const objectOfMovie = await getSearchByKeyWord(search).then(r => r);
-
-        setMovie(objectOfMovie);
-      } catch (error) {
-        setError(error);
-      }
+  const cleanMovieSearch = () => {
+    if (movieName === '' && movie.results.length > 0) {
+      window.localStorage.setItem(
+        'movieSearch',
+        JSON.stringify({
+          page: 0,
+          results: [],
+          total_results: 0,
+          total_pages: 0,
+        })
+      );
     }
-    fetchData();
-  }, [search]);
-
+  };
+  cleanMovieSearch();
   const handleSubmit = event => {
     event.preventDefault();
     setSearch(movieName);
@@ -64,8 +50,8 @@ const Movies = () => {
     const nextParams = query !== '' ? { query } : {};
     setSearchParams(nextParams);
   };
-  const firstRender = movie.results.length === 0 && movieName === '';
-  const noResults = movie.results.length === 0 && movieName !== '';
+  const firstRender = movie.results.length === 0 && search === '';
+  const noResults = movie.results.length === 0 && search !== '';
 
   return (
     <>

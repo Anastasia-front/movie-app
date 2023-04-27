@@ -40,49 +40,108 @@ const MovieDetails = () => {
     }
     fetchData();
   }, [id]);
-
   const location = useLocation();
-  // console.log(location);
-  const locationSearch =
-    location.state.from.state === null
-      ? location.state.from.search
-      : location.state.from.state.from.search;
+  console.log(location);
 
-  const backLinkHrefSearch =
-    location.pathname === '/movies' ||
-    `/movies/${id}/cast` ||
-    `/movies/${id}/reviews`
-      ? {
-          locationSearch,
-        } ?? '/movies'
-      : location.state?.from ?? '/';
+  const backLink = () => {
+    if (location.state === null) {
+      return { pathname: '/', search: '' };
+    }
+    if (location.state.from.state === null) {
+      const locationSearch =
+        location.state.from.state === null
+          ? location.state.from.search
+          : location.state.from.state.from.search;
 
-  const pathname =
-    location.state.from.state === null
-      ? location.state.from.pathname
-      : location.state.from.state.from.pathname;
+      const backLinkHrefSearch =
+        location.pathname === '/movies' ||
+        `/movies/${id}` ||
+        `/movies/${id}/cast` ||
+        `/movies/${id}/reviews`
+          ? {
+              locationSearch,
+            } ?? '/movies'
+          : location.state?.from ?? '/';
 
-  // const paPathname =
-  //   (location.pathname === `/movies/${id}/cast` || `/movies/${id}/reviews`) &&
-  //   location.state.from.state.from.pathname === '/'
-  //     ? location.state.from.state.from.pathname
-  //     : '/movies';
+      const pathname =
+        location.state.from.state === null
+          ? location.state.from.pathname
+          : location.state.from.state.from.pathname;
 
-  const backLinkHrefPathname = pathname === '/' ? '/' : '/movies';
-  // console.log(backLinkHrefPathname);
+      const backLinkHrefPathname = pathname === '/' ? '/' : '/movies';
+      return {
+        pathname: backLinkHrefPathname,
+        search: backLinkHrefSearch.locationSearch,
+      };
+    }
+    if (location.state.from.state.from.state === null) {
+      const locationSearch =
+        location.state.from.state.from.state === null
+          ? location.state.from.state.from.search
+          : location.state.from.state.from.state.from.search;
+
+      const backLinkHrefSearch =
+        location.pathname === '/movies' ||
+        `/movies/${id}` ||
+        `/movies/${id}/cast` ||
+        `/movies/${id}/reviews`
+          ? {
+              locationSearch,
+            } ?? '/movies'
+          : location.state?.from ?? '/';
+
+      const pathname =
+        location.state.from.state.from.state === null
+          ? location.state.from.state.from.pathname
+          : location.state.from.state.from.state.from.pathname;
+
+      const backLinkHrefPathname = pathname === '/' ? '/' : '/movies';
+
+      return {
+        pathname: backLinkHrefPathname,
+        search: backLinkHrefSearch.locationSearch,
+      };
+      // const paPathname =
+      //   (location.pathname === `/movies/${id}/cast` || `/movies/${id}/reviews`) &&
+      //   location.state.from.state.from.pathname === '/'
+      //     ? location.state.from.state.from.pathname
+      //     : '/movies';
+    }
+    if (location.state.from.state.from.state.from.state === null) {
+      const locationSearch =
+        location.state.from.state.from.state.from.state === null
+          ? location.state.from.state.from.state.from.search
+          : location.state.from.state.from.state.from.state.from.search;
+
+      const backLinkHrefSearch =
+        location.pathname === '/movies' ||
+        `/movies/${id}` ||
+        `/movies/${id}/cast` ||
+        `/movies/${id}/reviews`
+          ? {
+              locationSearch,
+            } ?? '/movies'
+          : location.state?.from ?? '/';
+
+      const pathname =
+        location.state.from.state.from.state.from.state === null
+          ? location.state.from.state.from.state.from.pathname
+          : location.state.from.state.from.state.from.state.from.pathname;
+
+      const backLinkHrefPathname = pathname === '/' ? '/' : '/movies';
+
+      return {
+        pathname: backLinkHrefPathname,
+        search: backLinkHrefSearch.locationSearch,
+      };
+    }
+  };
 
   return (
     <>
       {error === null ? (
         <Container>
-          <BackLink
-            to={{
-              pathname: backLinkHrefPathname,
-              search: backLinkHrefSearch.locationSearch,
-            }}
-          >
-            Back to movies
-          </BackLink>
+          <BackLink to={backLink()}>Back to movies</BackLink>
           <FirstWrapper>
             <MainInfo>
               {movie.backdrop_path !== null ? (

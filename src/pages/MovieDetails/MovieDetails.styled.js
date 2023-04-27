@@ -11,6 +11,7 @@ export const MainInfo = styled.div`
 
 export const Poster = styled.img`
   max-width: 500px;
+  max-height: 400px;
   border-radius: 7px;
 `;
 

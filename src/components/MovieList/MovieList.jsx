@@ -11,7 +11,7 @@ import {
 
 const MovieList = ({ movies }) => {
   const location = useLocation();
-  console.log(movies);
+
   return (
     <ListUl>
       {movies.map(movie => (
