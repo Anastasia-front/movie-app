@@ -18,7 +18,20 @@ import { Link, Outlet } from 'react-router-dom';
 
 const MovieDetails = () => {
   const [movie, setMovie] = useState(() => {
-    return JSON.parse(window.localStorage.getItem('movie')) ?? [];
+    return (
+      JSON.parse(window.localStorage.getItem('movie')) ?? {
+        backdrop_path: null,
+        id: 0,
+        poster_path: null,
+        title: '',
+        original_title: '',
+        release_date: '',
+        vote_average: 0,
+        vote_count: 0,
+        overview: '',
+        genres: [{ id: 0, name: '' }],
+      }
+    );
   });
   const [error, setError] = useState(null);
 
@@ -41,7 +54,7 @@ const MovieDetails = () => {
     fetchData();
   }, [id]);
   const location = useLocation();
-  console.log(location);
+  // console.log(location);
 
   const backLink = () => {
     if (location.state === null) {

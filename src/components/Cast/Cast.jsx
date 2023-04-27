@@ -6,7 +6,19 @@ import { ListLi, ListUl } from './Cast.styled';
 
 const Cast = () => {
   const [cast, setCast] = useState(() => {
-    return JSON.parse(window.localStorage.getItem('cast')) ?? {};
+    return (
+      JSON.parse(window.localStorage.getItem('cast')) ?? {
+        cast: [
+          {
+            id: 0,
+            profile_path: '',
+            name: '',
+            original_name: '',
+            character: '',
+          },
+        ],
+      }
+    );
   });
   const [error, setError] = useState(null);
 

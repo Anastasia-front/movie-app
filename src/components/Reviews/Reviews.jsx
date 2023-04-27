@@ -6,7 +6,11 @@ import { ListLi } from './Reviews.styled';
 
 const Reviews = () => {
   const [reviews, setReviews] = useState(() => {
-    return JSON.parse(window.localStorage.getItem('reviews')) ?? {};
+    return (
+      JSON.parse(window.localStorage.getItem('reviews')) ?? {
+        results: [{ id: '', author: '', content: '' }],
+      }
+    );
   });
   const [error, setError] = useState(null);
 

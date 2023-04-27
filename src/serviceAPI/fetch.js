@@ -1,9 +1,9 @@
 const BASE_URL = 'https://api.themoviedb.org/3/';
 const API_KEY = '78844696e6f21da4f5b43c08b71ce0bd';
 
-export async function getTrending() {
+export async function getTrending(page) {
   const response = await fetch(
-    `${BASE_URL}trending/movie/day?api_key=${API_KEY}`
+    `${BASE_URL}trending/movie/day?api_key=${API_KEY}&page=${page}`
   );
 
   return response.json();
@@ -32,9 +32,9 @@ export const getMovieReviewsById = async movieId => {
   return response.json();
 };
 
-export async function getSearchByKeyWord(query) {
+export async function getSearchByKeyWord(query, page) {
   const response = await fetch(
-    `${BASE_URL}search/movie?api_key=${API_KEY}&query=${query}`
+    `${BASE_URL}search/movie?api_key=${API_KEY}&query=${query}&page=${page}`
   );
 
   return response.json();
