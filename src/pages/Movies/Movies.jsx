@@ -28,9 +28,9 @@ const Movies = () => {
       })
     );
   });
-  const [pages, setPages] = useState(1);
+  // const [pages, setPages] = useState(1);
   const [allInfo, setAllInfo] = useState({
-    page: 2,
+    page: 1,
     results: [],
     total_results: 0,
     total_pages: 0,
@@ -42,7 +42,11 @@ const Movies = () => {
   }, [movie]);
 
   useEffect(() => {
-    if (allInfo.page <= allInfo.total_pages) {
+    if (movie.length === 0) return;
+    if (
+      allInfo.page <= allInfo.total_pages / 10 &&
+      allInfo.results.length !== 0
+    ) {
       async function fetchData() {
         try {
           const arrayOfMovies = await getSearchByKeyWord(
@@ -70,10 +74,10 @@ const Movies = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [allInfo, search]);
+  }, [allInfo, search, movie]);
 
   const cleanMovieSearch = () => {
-    if (movieName === '' && movie.length >= 0) {
+    if (movieName === '' && movie.length >= 0 && search !== '') {
       window.localStorage.setItem(
         'movieSearch',
         JSON.stringify([
@@ -106,16 +110,25 @@ const Movies = () => {
   reachTheEnd();
 
   const handleSubmit = event => {
+    setAllInfo({
+      page: 1,
+      results: [],
+      total_results: 0,
+      total_pages: 0,
+    });
     event.preventDefault();
-    setSearch(movieName);
-
     async function fetchData() {
       try {
-        const objectOfMovie = await getSearchByKeyWord(movieName, pages).then(
-          r => r.results
-        );
+        const objectOfMovie = await getSearchByKeyWord(
+          movieName,
+          allInfo.page
+        ).then(r => r.results);
         setMovie(objectOfMovie);
-        setPages(i => i + 1);
+        setSearch(movieName);
+        setAllInfo(prevState => ({
+          ...prevState,
+          page: 2,
+        }));
       } catch (error) {
         setError(error);
       }
@@ -127,16 +140,23 @@ const Movies = () => {
     const nextParams = query !== '' ? { query } : {};
     setSearchParams(nextParams);
   };
-  const firstRender = movie.length === 1 && search === '' && movieName === '';
-  const noResults = (movie.length === 1 || movie.length === 0) && search !== '';
+  const firstRender =
+    (movie.length === 1 || movie.length === 0) &&
+    search === '' &&
+    movieName === '';
+  const noResults = movie.length >= 0 && search !== '';
   const goodResponse = movie.length > 1 && movieName !== '';
 
   const fetchMoreData = () => {
-    if (movie.length !== 0) {
+    setHasMore(true);
+    if (movie.length !== 0 && allInfo.page !== 1) {
       async function getTotalPages() {
         try {
-          const tot = await getSearchByKeyWord(search, pages).then(r => r);
+          const tot = await getSearchByKeyWord(search, allInfo.page).then(
+            r => r
+          );
           setAllInfo(tot);
+          setHasMore(false);
         } catch (error) {
           setError(error);
         }
@@ -160,6 +180,7 @@ const Movies = () => {
         <InfiniteScroll
           dataLength={movie.length}
           next={fetchMoreData}
+          scrollThreshold={1}
           hasMore={hasMore}
           loader={<h4 style={{ textAlign: 'center' }}>Loading... </h4>}
           endMessage={

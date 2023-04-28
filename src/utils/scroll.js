@@ -15,4 +15,7 @@ export function resetScrollPos(scrollPosition) {
       window.scrollTo(0, scrollPos);
     }
   }
+  if (window.scrollY !== scrollPosition) {
+    localStorage.removeItem('scrollPos');
+  }
 }

@@ -116,6 +116,7 @@ const MovieList = ({ movies, onClick }) => {
 export default MovieList;
 
 MovieList.propTypes = {
+  onClick: PropTypes.func.isRequired,
   movies: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.number.isRequired,
