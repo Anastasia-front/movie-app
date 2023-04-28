@@ -19,8 +19,8 @@ const Home = () => {
       vote_count: 0,
     },
   ]);
-  const [pages, setPages] = useState(2);
-  const [totalPages, setTotalPages] = useState(3);
+  const [pages, setPages] = useState(1);
+  const [totalPages, setTotalPages] = useState(2);
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
 
@@ -55,7 +55,7 @@ const Home = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (pages <= totalPages / 10) {
+        if (pages <= totalPages / 100) {
           const arrayOfMovies = await getTrending(pages).then(r => r.results);
           setMovies(i => [...i, ...arrayOfMovies]);
           setPages(i => i + 1);
@@ -98,6 +98,8 @@ const Home = () => {
           <InfiniteScroll
             dataLength={movies.length}
             next={fetchMoreData}
+            // scrollThreshold={1}
+            // height={1400}
             hasMore={hasMore}
             loader={<h4 style={{ textAlign: 'center' }}>Loading...</h4>}
             endMessage={

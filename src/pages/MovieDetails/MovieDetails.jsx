@@ -174,9 +174,13 @@ const MovieDetails = () => {
                 />
               )}
               <MainText>
-                <h1>
-                  {movie.original_title} ({movie.release_date.slice(0, 4)})
-                </h1>
+                {movie.release_date !== '' ? (
+                  <h1>
+                    {movie.original_title} ({movie.release_date.slice(0, 4)})
+                  </h1>
+                ) : (
+                  <h1>{movie.original_title}</h1>
+                )}
                 <p>User Score: {Math.round(movie.vote_average * 10)}%</p>
                 <h2>Overview</h2>
                 <p>{movie.overview}</p>

@@ -14,6 +14,7 @@ const Movies = () => {
   const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const movieName = searchParams.get('query') ?? '';
+  const [hasMore, setHasMore] = useState(true);
   const [movie, setMovie] = useState(() => {
     return (
       JSON.parse(window.localStorage.getItem('movieSearch')) ??
@@ -28,21 +29,18 @@ const Movies = () => {
       })
     );
   });
-  // const [pages, setPages] = useState(1);
   const [allInfo, setAllInfo] = useState({
     page: 1,
     results: [],
     total_results: 0,
     total_pages: 0,
   });
-  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     window.localStorage.setItem('movieSearch', JSON.stringify(movie));
   }, [movie]);
 
   useEffect(() => {
-    if (movie.length === 0) return;
     if (
       allInfo.page <= allInfo.total_pages / 10 &&
       allInfo.results.length !== 0
@@ -74,10 +72,10 @@ const Movies = () => {
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [allInfo, search, movie]);
+  }, [allInfo, search]);
 
   const cleanMovieSearch = () => {
-    if (movieName === '' && movie.length >= 0 && search !== '') {
+    if (movieName === '' && movie.length >= 0) {
       window.localStorage.setItem(
         'movieSearch',
         JSON.stringify([
@@ -140,15 +138,9 @@ const Movies = () => {
     const nextParams = query !== '' ? { query } : {};
     setSearchParams(nextParams);
   };
-  const firstRender =
-    (movie.length === 1 || movie.length === 0) &&
-    search === '' &&
-    movieName === '';
-  const noResults = movie.length >= 0 && search !== '';
-  const goodResponse = movie.length > 1 && movieName !== '';
 
   const fetchMoreData = () => {
-    setHasMore(true);
+    // setHasMore(true);
     if (movie.length !== 0 && allInfo.page !== 1) {
       async function getTotalPages() {
         try {
@@ -156,7 +148,7 @@ const Movies = () => {
             r => r
           );
           setAllInfo(tot);
-          setHasMore(false);
+          // setHasMore(false);
         } catch (error) {
           setError(error);
         }
@@ -166,6 +158,13 @@ const Movies = () => {
   };
 
   resetScrollPos(scrollPosition);
+
+  const firstRender =
+    (movie.length === 1 || movie.length === 0) &&
+    search === '' &&
+    movieName === '';
+  const noResults = (movie.length === 1 || movie.length === 0) && search !== '';
+  const goodResponse = movie.length > 1 && movieName !== '';
 
   return (
     <>
