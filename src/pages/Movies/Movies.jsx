@@ -1,33 +1,36 @@
 import { useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import SearchBox from 'components/SearchBox/SearchBox';
+import { GoUp } from './Movies.styled';
+import { HiArrowUp } from 'react-icons/hi';
 import { getSearchByKeyWord } from 'serviceAPI/fetch';
 import MovieList from 'components/MovieList/MovieList';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { scrollPos, scrollTop, resetScrollPos } from 'utils/scroll';
 
 const Movies = () => {
   const [search, setSearch] = useState('');
+  const [scrollPosition, setScrollPosition] = useState(0);
   const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const movieName = searchParams.get('query') ?? '';
   const [movie, setMovie] = useState(() => {
     return (
-      JSON.parse(window.localStorage.getItem('movieSearch')) ?? [
-        {
-          id: 0,
-          poster_path: null,
-          title: '',
-          original_title: '',
-          release_date: '',
-          vote_average: 0,
-          vote_count: 0,
-        },
-      ]
+      JSON.parse(window.localStorage.getItem('movieSearch')) ??
+      Array.from({
+        id: 0,
+        poster_path: null,
+        title: '',
+        original_title: '',
+        release_date: '',
+        vote_average: 0,
+        vote_count: 0,
+      })
     );
   });
   const [pages, setPages] = useState(1);
   const [allInfo, setAllInfo] = useState({
-    page: 3,
+    page: 2,
     results: [],
     total_results: 0,
     total_pages: 0,
@@ -39,21 +42,35 @@ const Movies = () => {
   }, [movie]);
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        if (pages <= allInfo.page) {
-          const arrayOfMovies = await getSearchByKeyWord(search, pages).then(
-            r => r.results
-          );
+    if (allInfo.page <= allInfo.total_pages) {
+      async function fetchData() {
+        try {
+          const arrayOfMovies = await getSearchByKeyWord(
+            search,
+            allInfo.page
+          ).then(r => r.results);
           setMovie(i => [...i, ...arrayOfMovies]);
-          setPages(i => i + 1);
+          setAllInfo(prevState => ({
+            ...prevState,
+            page: prevState.page + 1,
+          }));
+        } catch (error) {
+          setError(error);
         }
-      } catch (error) {
-        setError(error);
       }
+      fetchData();
     }
-    fetchData();
-  }, [pages, allInfo, search]);
+    const handleScroll = () => {
+      const position = window.pageYOffset;
+      setScrollPosition(position);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [allInfo, search]);
 
   const cleanMovieSearch = () => {
     if (movieName === '' && movie.length >= 0) {
@@ -111,20 +128,24 @@ const Movies = () => {
     setSearchParams(nextParams);
   };
   const firstRender = movie.length === 1 && search === '' && movieName === '';
-  const noResults = movie.length === 1 && search !== '';
+  const noResults = (movie.length === 1 || movie.length === 0) && search !== '';
   const goodResponse = movie.length > 1 && movieName !== '';
 
   const fetchMoreData = () => {
-    async function getTotalPages() {
-      try {
-        const tot = await getSearchByKeyWord(search, pages).then(r => r);
-        setAllInfo(tot);
-      } catch (error) {
-        setError(error);
+    if (movie.length !== 0) {
+      async function getTotalPages() {
+        try {
+          const tot = await getSearchByKeyWord(search, pages).then(r => r);
+          setAllInfo(tot);
+        } catch (error) {
+          setError(error);
+        }
       }
+      getTotalPages();
     }
-    getTotalPages();
   };
+
+  resetScrollPos(scrollPosition);
 
   return (
     <>
@@ -147,7 +168,12 @@ const Movies = () => {
             </p>
           }
         >
-          <MovieList movies={movie} />
+          <MovieList movies={movie} onClick={scrollPos} />
+          {scrollPosition > 1000 && (
+            <GoUp onClick={scrollTop}>
+              UP <HiArrowUp size={24} />
+            </GoUp>
+          )}
         </InfiniteScroll>
       )}
 

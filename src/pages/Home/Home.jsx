@@ -1,9 +1,13 @@
-import { getTrending } from 'serviceAPI/fetch';
+import { getTrending, STATUS } from 'serviceAPI/fetch';
 import MovieList from 'components/MovieList/MovieList';
+import { GoUp } from 'pages/Movies/Movies.styled';
+import { HiArrowUp } from 'react-icons/hi';
 import { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { scrollPos, scrollTop, resetScrollPos } from 'utils/scroll';
 
 const Home = () => {
+  const [status, setStatus] = useState(STATUS.idle);
   const [movies, setMovies] = useState([
     {
       id: 0,
@@ -20,34 +24,38 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
 
-  // const [scrollPosition, setScrollPosition] = useState(0);
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {
+    setStatus(STATUS.pending);
     async function fetchData() {
       try {
         const arrayOfMovies = await getTrending(1).then(r => r.results);
         setMovies(arrayOfMovies);
         setPages(i => i + 1);
+        setStatus(STATUS.resolved);
       } catch (error) {
         setError(error);
+        setStatus(STATUS.rejected);
       }
     }
     fetchData();
-    // const handleScroll = () => {
-    //   const position = window.pageYOffset;
-    //   setScrollPosition(position);
-    // };
+    const handleScroll = () => {
+      const position = window.pageYOffset;
+      setScrollPosition(position);
+    };
 
-    // window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
-    // return () => {
-    //   window.removeEventListener('scroll', handleScroll);
-    // };
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
+
   useEffect(() => {
     async function fetchData() {
       try {
-        if (pages <= totalPages / 5) {
+        if (pages <= totalPages / 10) {
           const arrayOfMovies = await getTrending(pages).then(r => r.results);
           setMovies(i => [...i, ...arrayOfMovies]);
           setPages(i => i + 1);
@@ -80,9 +88,11 @@ const Home = () => {
   };
   reachTheEnd();
 
+  resetScrollPos(scrollPosition);
+
   return (
     <>
-      {error === null ? (
+      {status === STATUS.resolved && (
         <>
           <h1>Trending today</h1>
           <InfiniteScroll
@@ -96,11 +106,20 @@ const Home = () => {
               </p>
             }
           >
-            <MovieList movies={movies} />
+            <MovieList movies={movies} onClick={scrollPos} />
+            {scrollPosition > 1000 && (
+              <GoUp onClick={scrollTop}>
+                UP <HiArrowUp size={24} />
+              </GoUp>
+            )}
           </InfiniteScroll>
         </>
-      ) : (
+      )}
+      {status === STATUS.rejected && (
         <h3>Something went wrong on API... The messege error `{error}`</h3>
+      )}
+      {status === STATUS.pending && (
+        <h3>Please wait, information is loading...</h3>
       )}
     </>
   );

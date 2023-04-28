@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getMovieCastById } from 'serviceAPI/fetch';
+import { getMovieCastById, STATUS } from 'serviceAPI/fetch';
 import { Container } from 'components/SharedLayout/SharedLayout.styled';
 import { ListLi, ListUl } from './Cast.styled';
 
 const Cast = () => {
+  const [status, setStatus] = useState(STATUS.idle);
   const [cast, setCast] = useState(() => {
     return (
       JSON.parse(window.localStorage.getItem('cast')) ?? {
@@ -29,12 +30,15 @@ const Cast = () => {
   }, [cast]);
 
   useEffect(() => {
+    setStatus(STATUS.pending);
     async function fetchData() {
       try {
         const objectOfCast = await getMovieCastById(id).then(r => r);
         setCast(objectOfCast);
+        setStatus(STATUS.resolved);
       } catch (error) {
         setError(error);
+        setStatus(STATUS.rejected);
       }
     }
     fetchData();
@@ -42,7 +46,7 @@ const Cast = () => {
 
   return (
     <>
-      {error === null ? (
+      {status === STATUS.resolved && (
         <Container>
           {cast.cast.length !== 0 ? (
             <ListUl>
@@ -76,8 +80,12 @@ const Cast = () => {
             <h3>We don`t have list of actors for this movie.</h3>
           )}
         </Container>
-      ) : (
+      )}
+      {status === STATUS.rejected && (
         <h3>Something went wrong on API... The messege error `{error}`</h3>
+      )}
+      {status === STATUS.pending && (
+        <h3>Please wait, information is loading...</h3>
       )}
     </>
   );

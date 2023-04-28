@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { BackLink } from 'components/BackLink/BackLink';
-import { getMovieById } from 'serviceAPI/fetch';
+import { getMovieById, STATUS } from 'serviceAPI/fetch';
 import { Container } from 'components/SharedLayout/SharedLayout.styled';
 import {
   FirstWrapper,
@@ -17,6 +17,7 @@ import { Suspense } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
 const MovieDetails = () => {
+  const [status, setStatus] = useState(STATUS.idle);
   const [movie, setMovie] = useState(() => {
     return (
       JSON.parse(window.localStorage.getItem('movie')) ?? {
@@ -42,19 +43,21 @@ const MovieDetails = () => {
   }, [movie]);
 
   useEffect(() => {
+    setStatus(STATUS.pending);
     async function fetchData() {
       try {
         const objectOfMovie = await getMovieById(id).then(r => r);
 
         setMovie(objectOfMovie);
+        setStatus(STATUS.resolved);
       } catch (error) {
         setError(error);
+        setStatus(STATUS.rejected);
       }
     }
     fetchData();
   }, [id]);
   const location = useLocation();
-  // console.log(location);
 
   const backLink = () => {
     if (location.state === null) {
@@ -152,7 +155,7 @@ const MovieDetails = () => {
 
   return (
     <>
-      {error === null ? (
+      {status === STATUS.resolved && (
         <Container>
           <BackLink to={backLink()}>Back to movies</BackLink>
           <FirstWrapper>
@@ -205,8 +208,12 @@ const MovieDetails = () => {
             </Suspense>
           </FirstWrapper>
         </Container>
-      ) : (
+      )}
+      {status === STATUS.rejected && (
         <h3>Something went wrong on API... The messege error `{error}`</h3>
+      )}
+      {status === STATUS.pending && (
+        <h3>Please wait, information is loading...</h3>
       )}
     </>
   );

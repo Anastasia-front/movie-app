@@ -48,7 +48,7 @@ export const Link = styled(NavLink)`
 
   &.active {
     color: white;
-    background-color: rgb(136 74 9);
+    background-color: rgb(209 127 25);
   }
 `;
 

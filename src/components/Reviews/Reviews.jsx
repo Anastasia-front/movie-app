@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getMovieReviewsById } from 'serviceAPI/fetch';
+import { getMovieReviewsById, STATUS } from 'serviceAPI/fetch';
 import { Container } from 'components/SharedLayout/SharedLayout.styled';
 import { ListLi } from './Reviews.styled';
 
 const Reviews = () => {
+  const [status, setStatus] = useState(STATUS.idle);
   const [reviews, setReviews] = useState(() => {
     return (
       JSON.parse(window.localStorage.getItem('reviews')) ?? {
@@ -21,13 +22,15 @@ const Reviews = () => {
   }, [reviews]);
 
   useEffect(() => {
+    setStatus(STATUS.pending);
     async function fetchData() {
       try {
         const objectOfreviews = await getMovieReviewsById(id).then(r => r);
-
+        setStatus(STATUS.resolved);
         setReviews(objectOfreviews);
       } catch (error) {
         setError(error);
+        setStatus(STATUS.rejected);
       }
     }
     fetchData();
@@ -35,7 +38,7 @@ const Reviews = () => {
 
   return (
     <>
-      {error === null ? (
+      {status === STATUS.resolved && (
         <Container>
           {reviews.results.length !== 0 ? (
             <ul>
@@ -52,8 +55,12 @@ const Reviews = () => {
             <h3>We don`t have any reviews for this movie.</h3>
           )}
         </Container>
-      ) : (
+      )}
+      {status === STATUS.rejected && (
         <h3>Something went wrong on API... The messege error `{error}`</h3>
+      )}
+      {status === STATUS.pending && (
+        <h3>Please wait, information is loading...</h3>
       )}
     </>
   );

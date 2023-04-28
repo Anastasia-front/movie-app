@@ -39,3 +39,10 @@ export async function getSearchByKeyWord(query, page) {
 
   return response.json();
 }
+
+export const STATUS = {
+  idle: 'idle',
+  pending: 'pending',
+  rejected: 'rejected',
+  resolved: 'resolved',
+};

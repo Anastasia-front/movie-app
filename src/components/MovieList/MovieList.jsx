@@ -9,7 +9,7 @@ import {
   Block,
 } from './MovieList.styled';
 
-const MovieList = ({ movies }) => {
+const MovieList = ({ movies, onClick }) => {
   const location = useLocation();
 
   return (
@@ -17,7 +17,11 @@ const MovieList = ({ movies }) => {
       {movies.map(movie => (
         <ListLi key={movie.id}>
           {location.pathname === '/movies' ? (
-            <Link to={`${movie.id}`} state={{ from: location }}>
+            <Link
+              onClick={onClick}
+              to={`${movie.id}`}
+              state={{ from: location }}
+            >
               {movie.poster_path !== null ? (
                 <Image
                   src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -58,7 +62,11 @@ const MovieList = ({ movies }) => {
               </Description>
             </Link>
           ) : (
-            <Link to={`movies/${movie.id}`} state={{ from: location }}>
+            <Link
+              onClick={onClick}
+              to={`movies/${movie.id}`}
+              state={{ from: location }}
+            >
               {movie.poster_path !== null ? (
                 <Image
                   src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
