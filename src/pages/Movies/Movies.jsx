@@ -6,132 +6,67 @@ import { HiArrowUp } from 'react-icons/hi';
 import { getSearchByKeyWord } from 'serviceAPI/fetch';
 import MovieList from 'components/MovieList/MovieList';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { scrollPos, scrollTop, resetScrollPos } from 'utils/scroll';
+import {
+  scrollPos,
+  scrollTop,
+  resetScrollPos,
+  handleScroll,
+} from 'utils/scroll';
 
 const Movies = () => {
-  const [search, setSearch] = useState('');
   const [scrollPosition, setScrollPosition] = useState(0);
   const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const movieName = searchParams.get('query') ?? '';
-  const [hasMore, setHasMore] = useState(true);
-  const [movie, setMovie] = useState(() => {
-    return (
-      JSON.parse(window.localStorage.getItem('movieSearch')) ??
-      Array.from({
-        id: 0,
-        poster_path: null,
-        title: '',
-        original_title: '',
-        release_date: '',
-        vote_average: 0,
-        vote_count: 0,
-      })
-    );
-  });
-  const [allInfo, setAllInfo] = useState({
-    page: 1,
-    results: [],
-    total_results: 0,
-    total_pages: 0,
-  });
+  const [search, setSearch] = useState(searchParams.get('query') ?? '');
+  // const [hasMore, setHasMore] = useState(true);
+  const [movie, setMovie] = useState([]);
+  const [pages, setPages] = useState(1);
+
+  // const [totalPages, setTotalPages] = useState(2);
 
   useEffect(() => {
-    window.localStorage.setItem('movieSearch', JSON.stringify(movie));
-  }, [movie]);
+    window.addEventListener('scroll', handleScroll(setScrollPosition));
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll(setScrollPosition));
+    };
+  }, []);
 
   useEffect(() => {
-    if (
-      allInfo.page <= allInfo.total_pages / 10 &&
-      allInfo.results.length !== 0
-    ) {
+    if (search === '') {
+      return;
+    }
+    if (pages === 1) {
       async function fetchData() {
         try {
-          const arrayOfMovies = await getSearchByKeyWord(
-            search,
-            allInfo.page
-          ).then(r => r.results);
-          setMovie(i => [...i, ...arrayOfMovies]);
-          setAllInfo(prevState => ({
-            ...prevState,
-            page: prevState.page + 1,
-          }));
+          getSearchByKeyWord(search, pages).then(info => {
+            setMovie(info.results);
+          });
         } catch (error) {
           setError(error);
         }
       }
       fetchData();
     }
-    const handleScroll = () => {
-      const position = window.pageYOffset;
-      setScrollPosition(position);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [allInfo, search]);
-
-  const cleanMovieSearch = () => {
-    if (movieName === '' && movie.length >= 0) {
-      window.localStorage.setItem(
-        'movieSearch',
-        JSON.stringify([
-          {
-            id: 0,
-            poster_path: null,
-            title: '',
-            original_title: '',
-            release_date: '',
-            vote_average: 0,
-            vote_count: 0,
-          },
-        ])
-      );
+    if (pages > 1) {
+      async function fetchData() {
+        try {
+          getSearchByKeyWord(search, pages).then(info => {
+            setMovie(i => [...i, ...info.results]);
+          });
+        } catch (error) {
+          setError(error);
+        }
+      }
+      fetchData();
     }
-  };
-  cleanMovieSearch();
-
-  const reachTheEnd = () => {
-    // const docHeight = document.documentElement.scrollHeight;
-    // const currentPos = window.innerHeight + window.pageYOffset;
-
-    // if (currentPos >= docHeight) {
-    if (allInfo.total_results === movie.length) {
-      // alert('The end!');
-      setHasMore(false);
-    }
-    // }
-  };
-  reachTheEnd();
+  }, [pages, search]);
 
   const handleSubmit = event => {
-    setAllInfo({
-      page: 1,
-      results: [],
-      total_results: 0,
-      total_pages: 0,
-    });
     event.preventDefault();
-    async function fetchData() {
-      try {
-        const objectOfMovie = await getSearchByKeyWord(
-          movieName,
-          allInfo.page
-        ).then(r => r.results);
-        setMovie(objectOfMovie);
-        setSearch(movieName);
-        setAllInfo(prevState => ({
-          ...prevState,
-          page: 2,
-        }));
-      } catch (error) {
-        setError(error);
-      }
-    }
-    fetchData();
+    setSearch(movieName);
+    setPages(1);
   };
 
   const updateQueryString = query => {
@@ -140,30 +75,23 @@ const Movies = () => {
   };
 
   const fetchMoreData = () => {
-    // setHasMore(true);
-    if (movie.length !== 0 && allInfo.page !== 1) {
-      async function getTotalPages() {
-        try {
-          const tot = await getSearchByKeyWord(search, allInfo.page).then(
-            r => r
-          );
-          setAllInfo(tot);
-          // setHasMore(false);
-        } catch (error) {
-          setError(error);
-        }
-      }
-      getTotalPages();
-    }
+    setPages(i => i + 1);
   };
+
+  // const reachTheEnd = () => {
+  //   if (movie.length !== 0 && movie.length >= pages * 20) {
+  //     setHasMore(false);
+  //   } else {
+  //     return;
+  //   }
+  // };
+  // reachTheEnd();
 
   resetScrollPos(scrollPosition);
 
-  const firstRender =
-    (movie.length === 1 || movie.length === 0) &&
-    search === '' &&
-    movieName === '';
-  const noResults = (movie.length === 1 || movie.length === 0) && search !== '';
+  const firstRender = movie.length === 0 && search === '' && movieName === '';
+  const noResults =
+    movie.length === 0 && pages === 1 && search !== '' && movieName !== '';
   const goodResponse = movie.length > 1 && movieName !== '';
 
   return (
@@ -179,8 +107,9 @@ const Movies = () => {
         <InfiniteScroll
           dataLength={movie.length}
           next={fetchMoreData}
-          scrollThreshold={1}
-          hasMore={hasMore}
+          // scrollThreshold={1}
+          height={1400}
+          hasMore={true}
           loader={<h4 style={{ textAlign: 'center' }}>Loading... </h4>}
           endMessage={
             <p style={{ textAlign: 'center' }}>

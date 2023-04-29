@@ -4,7 +4,12 @@ import { GoUp } from 'pages/Movies/Movies.styled';
 import { HiArrowUp } from 'react-icons/hi';
 import { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { scrollPos, scrollTop, resetScrollPos } from 'utils/scroll';
+import {
+  scrollPos,
+  scrollTop,
+  resetScrollPos,
+  handleScroll,
+} from 'utils/scroll';
 
 const Home = () => {
   const [status, setStatus] = useState(STATUS.idle);
@@ -19,7 +24,7 @@ const Home = () => {
       vote_count: 0,
     },
   ]);
-  const [pages, setPages] = useState(1);
+  const [pages, setPages] = useState(2);
   const [totalPages, setTotalPages] = useState(2);
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
@@ -30,9 +35,10 @@ const Home = () => {
     setStatus(STATUS.pending);
     async function fetchData() {
       try {
-        const arrayOfMovies = await getTrending(1).then(r => r.results);
-        setMovies(arrayOfMovies);
-        setPages(i => i + 1);
+        getTrending(1).then(info => {
+          setTotalPages(info.total_pages);
+          setMovies(info.results);
+        });
         setStatus(STATUS.resolved);
       } catch (error) {
         setError(error);
@@ -40,17 +46,15 @@ const Home = () => {
       }
     }
     fetchData();
-    const handleScroll = () => {
-      const position = window.pageYOffset;
-      setScrollPosition(position);
-    };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll(setScrollPosition));
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('scroll', handleScroll(setScrollPosition));
     };
   }, []);
+
+  console.log(scrollPosition);
 
   useEffect(() => {
     async function fetchData() {
@@ -58,7 +62,6 @@ const Home = () => {
         if (pages <= totalPages / 100) {
           const arrayOfMovies = await getTrending(pages).then(r => r.results);
           setMovies(i => [...i, ...arrayOfMovies]);
-          setPages(i => i + 1);
         }
       } catch (error) {
         setError(error);
@@ -68,21 +71,11 @@ const Home = () => {
   }, [pages, totalPages]);
 
   const fetchMoreData = () => {
-    async function getTotalPages() {
-      try {
-        const objOfMovies = await getTrending(totalPages).then(
-          r => r.total_pages
-        );
-        setTotalPages(objOfMovies);
-      } catch (error) {
-        setError(error);
-      }
-    }
-    getTotalPages();
+    setPages(i => i + 1);
   };
 
   const reachTheEnd = () => {
-    if (totalPages === movies.length) {
+    if (totalPages / 100 === pages) {
       setHasMore(false);
     }
   };
@@ -99,7 +92,7 @@ const Home = () => {
             dataLength={movies.length}
             next={fetchMoreData}
             // scrollThreshold={1}
-            // height={1400}
+            height={1400}
             hasMore={hasMore}
             loader={<h4 style={{ textAlign: 'center' }}>Loading...</h4>}
             endMessage={

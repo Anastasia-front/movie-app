@@ -19,3 +19,8 @@ export function resetScrollPos(scrollPosition) {
     localStorage.removeItem('scrollPos');
   }
 }
+
+export const handleScroll = setScrollPosition => {
+  const position = window.pageYOffset;
+  setScrollPosition(position);
+};

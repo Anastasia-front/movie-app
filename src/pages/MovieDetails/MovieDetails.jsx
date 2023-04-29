@@ -18,29 +18,21 @@ import { Link, Outlet } from 'react-router-dom';
 
 const MovieDetails = () => {
   const [status, setStatus] = useState(STATUS.idle);
-  const [movie, setMovie] = useState(() => {
-    return (
-      JSON.parse(window.localStorage.getItem('movie')) ?? {
-        backdrop_path: null,
-        id: 0,
-        poster_path: null,
-        title: '',
-        original_title: '',
-        release_date: '',
-        vote_average: 0,
-        vote_count: 0,
-        overview: '',
-        genres: [{ id: 0, name: '' }],
-      }
-    );
+  const [movie, setMovie] = useState({
+    backdrop_path: null,
+    id: 0,
+    poster_path: null,
+    title: '',
+    original_title: '',
+    release_date: '',
+    vote_average: 0,
+    vote_count: 0,
+    overview: '',
+    genres: [{ id: 0, name: '' }],
   });
   const [error, setError] = useState(null);
 
   const { id } = useParams();
-
-  useEffect(() => {
-    window.localStorage.setItem('movie', JSON.stringify(movie));
-  }, [movie]);
 
   useEffect(() => {
     setStatus(STATUS.pending);
