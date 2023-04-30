@@ -7,6 +7,9 @@ import {
   Logo,
   Link,
   Icon,
+  Footer,
+  API,
+  Info,
 } from './SharedLayout.styled';
 
 export const SharedLayout = () => {
@@ -33,6 +36,12 @@ export const SharedLayout = () => {
           <Outlet />
         </Suspense>
       </Container>
+      <Footer>
+        <Info>Copyright © 2023. Created by Prysiazhnaia Anastasiia</Info>
+        <Info>
+          Thanks for API <API>themoviedb.org</API>
+        </Info>
+      </Footer>
     </>
   );
 };

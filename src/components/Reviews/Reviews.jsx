@@ -6,20 +6,13 @@ import { ListLi } from './Reviews.styled';
 
 const Reviews = () => {
   const [status, setStatus] = useState(STATUS.idle);
-  const [reviews, setReviews] = useState(() => {
-    return (
-      JSON.parse(window.localStorage.getItem('reviews')) ?? {
-        results: [{ id: '', author: '', content: '' }],
-      }
-    );
+  const [reviews, setReviews] = useState({
+    results: [{ id: '', author: '', content: '' }],
   });
+
   const [error, setError] = useState(null);
 
   const { id } = useParams();
-
-  useEffect(() => {
-    window.localStorage.setItem('reviews', JSON.stringify(reviews));
-  }, [reviews]);
 
   useEffect(() => {
     setStatus(STATUS.pending);

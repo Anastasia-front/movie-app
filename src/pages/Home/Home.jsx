@@ -4,12 +4,7 @@ import { GoUp } from 'pages/Movies/Movies.styled';
 import { HiArrowUp } from 'react-icons/hi';
 import { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {
-  scrollPos,
-  scrollTop,
-  resetScrollPos,
-  handleScroll,
-} from 'utils/scroll';
+import { scrollPos, scrollTop, infiniteHeight, boxScroll } from 'utils/scroll';
 
 const Home = () => {
   const [status, setStatus] = useState(STATUS.idle);
@@ -29,10 +24,9 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
 
-  const [scrollPosition, setScrollPosition] = useState(0);
-
   useEffect(() => {
     setStatus(STATUS.pending);
+    localStorage.setItem('scrollPos', 0);
     async function fetchData() {
       try {
         getTrending(1).then(info => {
@@ -46,15 +40,7 @@ const Home = () => {
       }
     }
     fetchData();
-
-    window.addEventListener('scroll', handleScroll(setScrollPosition));
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll(setScrollPosition));
-    };
   }, []);
-
-  console.log(scrollPosition);
 
   useEffect(() => {
     async function fetchData() {
@@ -81,18 +67,18 @@ const Home = () => {
   };
   reachTheEnd();
 
-  resetScrollPos(scrollPosition);
-
   return (
     <>
       {status === STATUS.resolved && (
         <>
-          <h1>Trending today</h1>
+          <h1 style={{ fontSize: '20px' }}>Trending today</h1>
           <InfiniteScroll
             dataLength={movies.length}
             next={fetchMoreData}
-            // scrollThreshold={1}
-            height={1400}
+            initialScrollY={JSON.parse(
+              window.localStorage.getItem('scrollPos')
+            )}
+            height={infiniteHeight()}
             hasMore={hasMore}
             loader={<h4 style={{ textAlign: 'center' }}>Loading...</h4>}
             endMessage={
@@ -101,9 +87,9 @@ const Home = () => {
               </p>
             }
           >
-            <MovieList movies={movies} onClick={scrollPos} />
-            {scrollPosition > 1000 && (
-              <GoUp onClick={scrollTop}>
+            <MovieList movies={movies} onClick={() => scrollPos(boxScroll())} />
+            {boxScroll() > 1000 && (
+              <GoUp onClick={() => scrollTop()}>
                 UP <HiArrowUp size={24} />
               </GoUp>
             )}

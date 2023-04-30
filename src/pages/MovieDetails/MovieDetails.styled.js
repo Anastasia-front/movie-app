@@ -3,10 +3,20 @@ import styled from 'styled-components';
 export const FirstWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  overflow: scroll;
 `;
 
 export const MainInfo = styled.div`
+  margin-bottom: 20px;
   display: flex;
+  flex-direction: column;
+  @media screen and (min-width: 950px) {
+    flex-direction: row;
+  }
+`;
+
+export const Addition = styled.div`
+  margin-left: 30px;
 `;
 
 export const Poster = styled.img`

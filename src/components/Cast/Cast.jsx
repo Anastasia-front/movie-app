@@ -6,28 +6,20 @@ import { ListLi, ListUl } from './Cast.styled';
 
 const Cast = () => {
   const [status, setStatus] = useState(STATUS.idle);
-  const [cast, setCast] = useState(() => {
-    return (
-      JSON.parse(window.localStorage.getItem('cast')) ?? {
-        cast: [
-          {
-            id: 0,
-            profile_path: '',
-            name: '',
-            original_name: '',
-            character: '',
-          },
-        ],
-      }
-    );
+  const [cast, setCast] = useState({
+    cast: [
+      {
+        id: 0,
+        profile_path: '',
+        name: '',
+        original_name: '',
+        character: '',
+      },
+    ],
   });
   const [error, setError] = useState(null);
 
   const { id } = useParams();
-
-  useEffect(() => {
-    window.localStorage.setItem('cast', JSON.stringify(cast));
-  }, [cast]);
 
   useEffect(() => {
     setStatus(STATUS.pending);

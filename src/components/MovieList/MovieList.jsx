@@ -49,7 +49,11 @@ const MovieList = ({ movies, onClick }) => {
               <Description>
                 <Block>
                   <p>Release date:</p>
-                  <p>{movie.release_date.split('-').reverse().join('/')}</p>
+                  {movie.release_date !== '' ? (
+                    <p>{movie.release_date.split('-').reverse().join('.')}</p>
+                  ) : (
+                    <p>unknown</p>
+                  )}
                 </Block>
                 <Block>
                   <p> Rate:</p>
@@ -94,7 +98,7 @@ const MovieList = ({ movies, onClick }) => {
               <Description>
                 <Block>
                   <p>Release date:</p>
-                  <p>{movie.release_date.split('-').reverse().join('/')}</p>
+                  <p>{movie.release_date.split('-').reverse().join('.')}</p>
                 </Block>
                 <Block>
                   <p> Rate:</p>

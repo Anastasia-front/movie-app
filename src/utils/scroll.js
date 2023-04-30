@@ -1,26 +1,24 @@
 export const scrollTop = () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const box = document.querySelector('.infinite-scroll-component ');
+  box.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-export function scrollPos() {
-  localStorage.setItem('scrollPos', window.scrollY);
-}
+export const boxScroll = () => {
+  const box = document.querySelector('.infinite-scroll-component ');
+  if (box) {
+    const scrollPosition = box.scrollTop;
+    return scrollPosition;
+  }
+};
 
-export function resetScrollPos(scrollPosition) {
-  if (window.scrollY !== scrollPosition && window.scrollY !== 0) {
-    localStorage.removeItem('scrollPos');
+export function scrollPos(containerRef) {
+  if (containerRef !== undefined) {
+    localStorage.setItem('scrollPos', containerRef);
   } else {
-    const scrollPos = localStorage.getItem('scrollPos');
-    if (scrollPos !== null) {
-      window.scrollTo(0, scrollPos);
-    }
-  }
-  if (window.scrollY !== scrollPosition) {
-    localStorage.removeItem('scrollPos');
+    localStorage.setItem('scrollPos', 0);
   }
 }
 
-export const handleScroll = setScrollPosition => {
-  const position = window.pageYOffset;
-  setScrollPosition(position);
+export const infiniteHeight = () => {
+  return window.innerHeight - 190;
 };

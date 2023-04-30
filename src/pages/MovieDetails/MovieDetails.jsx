@@ -8,6 +8,7 @@ import {
   MainInfo,
   Poster,
   MainText,
+  Addition,
   AdditionsLi,
   AdditionsUl,
   Genres,
@@ -184,7 +185,7 @@ const MovieDetails = () => {
                 </Genres>
               </MainText>
             </MainInfo>
-            <div>
+            <Addition>
               <h3>Additional information</h3>
               <AdditionsUl>
                 <AdditionsLi>
@@ -198,7 +199,7 @@ const MovieDetails = () => {
                   </Link>
                 </AdditionsLi>
               </AdditionsUl>
-            </div>
+            </Addition>
             <Suspense fallback={<div>Loading subpage...</div>}>
               <Outlet />
             </Suspense>

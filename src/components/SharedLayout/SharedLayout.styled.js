@@ -25,10 +25,10 @@ export const HeaderContainer = styled.div`
 export const Container = styled.div`
   max-width: 900px;
   margin: 0 auto;
-  padding: 0 30px;
+  padding: 0 30px 100px;
 
   @media screen and (min-width: 950px) {
-    padding: 0;
+    padding: 0 0 50px;
   }
 `;
 export const Logo = styled.p`
@@ -55,4 +55,22 @@ export const Link = styled(NavLink)`
 export const Icon = styled.span`
   margin-right: 10px;
   font-size: 25px;
+`;
+
+export const Footer = styled.footer`
+  border-top: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff1e0;
+`;
+
+export const Info = styled.p`
+  padding: 7px;
+  margin: 0;
+  font-size: 10px;
+  text-align: center;
+`;
+
+export const API = styled.a`
+  color: #795548;
 `;

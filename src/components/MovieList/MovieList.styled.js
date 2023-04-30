@@ -1,9 +1,5 @@
 import styled from 'styled-components';
 
-// export const AlignCenter = styled.div`
-//   margin: 0 auto;
-// `;
-
 export const ListUl = styled.ul`
   display: flex;
   flex-wrap: wrap;
