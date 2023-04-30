@@ -16,6 +16,7 @@ const Movies = () => {
   const [hasMore, setHasMore] = useState(true);
   const [movie, setMovie] = useState([]);
   const [pages, setPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('scrollPos', 0);
@@ -49,12 +50,20 @@ const Movies = () => {
       }
       fetchData();
     }
+    setLoading(false);
   }, [pages, search]);
+
+  useEffect(() => {
+    if (movieName !== search) {
+      setMovie([]);
+    }
+  }, [movieName, search]);
 
   const handleSubmit = event => {
     event.preventDefault();
     setSearch(movieName);
     setPages(1);
+    setLoading(true);
   };
 
   const updateQueryString = query => {
@@ -79,8 +88,11 @@ const Movies = () => {
 
   const firstRender = movie.length === 0 && search === '' && movieName === '';
   const noResults =
-    movie.length === 0 && pages === 1 && search !== '' && movieName !== '';
-  const goodResponse = movie.length > 1 && movieName !== '';
+    movie.length === 0 &&
+    pages === 1 &&
+    search === movieName &&
+    loading === false;
+  const goodResponse = movie.length >= 1 && movieName !== '';
 
   return (
     <>
@@ -92,6 +104,8 @@ const Movies = () => {
       {firstRender && (
         <Message>Find movie that you want to watch above...</Message>
       )}
+
+      {loading && <p>Loading...</p>}
 
       {goodResponse && (
         <InfiniteScroll
