@@ -20,5 +20,5 @@ export function scrollPos(containerRef) {
 }
 
 export const infiniteHeight = () => {
-  return window.innerHeight;
+  return window.innerHeight - 150;
 };

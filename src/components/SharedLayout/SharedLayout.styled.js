@@ -30,12 +30,12 @@ export const HeaderContainer = styled.div`
 `;
 export const Container = styled.div`
   flex-shrink: 0;
-  max-width: 900px;
-  ${'' /* margin: 0 auto; */}
+  max-width: 930px;
+  margin: 0 auto;
   padding: 0 30px 100px;
 
   @media screen and (min-width: 950px) {
-    padding: 0 0 50px;
+    padding: 0 20px 50px;
   }
 `;
 export const Logo = styled.p`

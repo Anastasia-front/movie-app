@@ -20,7 +20,6 @@ const Home = () => {
     },
   ]);
   const [pages, setPages] = useState(2);
-  const [totalPages, setTotalPages] = useState(2);
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
 
@@ -30,7 +29,6 @@ const Home = () => {
     async function fetchData() {
       try {
         getTrending(1).then(info => {
-          setTotalPages(info.total_pages);
           setMovies(info.results);
         });
         setStatus(STATUS.resolved);
@@ -45,24 +43,26 @@ const Home = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (pages <= totalPages / 100) {
-          const arrayOfMovies = await getTrending(pages).then(r => r.results);
-          setMovies(i => [...i, ...arrayOfMovies]);
-        }
+        const arrayOfMovies = await getTrending(pages).then(r => r.results);
+        setMovies(i => [...i, ...arrayOfMovies]);
       } catch (error) {
         setError(error);
       }
     }
     fetchData();
-  }, [pages, totalPages]);
+  }, [pages]);
 
   const fetchMoreData = () => {
     setPages(i => i + 1);
   };
 
   const reachTheEnd = () => {
-    if (totalPages / 100 === pages) {
-      setHasMore(false);
+    if (movies.length !== 0) {
+      getTrending(pages).then(info => {
+        if (movies.length === info.total_results) {
+          setHasMore(false);
+        }
+      });
     }
   };
   reachTheEnd();
@@ -73,7 +73,6 @@ const Home = () => {
         <>
           <h1 style={{ fontSize: '20px' }}>Trending today</h1>
           <InfiniteScroll
-            style={{ overflow: 'visible' }}
             dataLength={movies.length}
             next={fetchMoreData}
             initialScrollY={JSON.parse(
@@ -89,12 +88,12 @@ const Home = () => {
             }
           >
             <MovieList movies={movies} onClick={() => scrollPos(boxScroll())} />
-            {boxScroll() > 1000 && (
-              <GoUp onClick={() => scrollTop()}>
-                UP <HiArrowUp size={24} />
-              </GoUp>
-            )}
           </InfiniteScroll>
+          {boxScroll() > 1000 && (
+            <GoUp onClick={() => scrollTop()}>
+              UP <HiArrowUp size={24} />
+            </GoUp>
+          )}
         </>
       )}
       {status === STATUS.rejected && (

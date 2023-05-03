@@ -1,5 +1,11 @@
 import styled from 'styled-components';
 
+export const Container = styled.div`
+  float: left;
+  margin-left: -400px;
+  padding: 0;
+`;
+
 export const GoUp = styled.button`
   position: fixed;
   bottom: 50px;

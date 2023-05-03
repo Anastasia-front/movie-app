@@ -99,6 +99,9 @@ const Movies = () => {
         onChange={updateQueryString}
         onSubmit={handleSubmit}
       />
+      <Message style={{ visibility: 'hidden', margin: 0, padding: 0 }}>
+        Find movie that you want to watch above......
+      </Message>
       {firstRender && (
         <Message>Find movie that you want to watch above...</Message>
       )}
@@ -106,27 +109,31 @@ const Movies = () => {
       {/* {loading && <p>Loading...</p>} */}
 
       {goodResponse && (
-        <InfiniteScroll
-          dataLength={movie.length}
-          next={fetchMoreData}
-          style={{ overflow: 'auto' }}
-          initialScrollY={JSON.parse(window.localStorage.getItem('scrollPos'))}
-          height={infiniteHeight()}
-          hasMore={hasMore}
-          loader={<h4 style={{ textAlign: 'center' }}>Loading... </h4>}
-          endMessage={
-            <p style={{ textAlign: 'center' }}>
-              <b>Yay! You have seen it all ;D</b>
-            </p>
-          }
-        >
-          <MovieList movies={movie} onClick={() => scrollPos(boxScroll())} />
+        <>
+          <InfiniteScroll
+            dataLength={movie.length}
+            next={fetchMoreData}
+            style={{ overflow: 'auto' }}
+            initialScrollY={JSON.parse(
+              window.localStorage.getItem('scrollPos')
+            )}
+            height={infiniteHeight()}
+            hasMore={hasMore}
+            loader={<h4 style={{ textAlign: 'center' }}>Loading... </h4>}
+            endMessage={
+              <p style={{ textAlign: 'center' }}>
+                <b>Yay! You have seen it all ;D</b>
+              </p>
+            }
+          >
+            <MovieList movies={movie} onClick={() => scrollPos(boxScroll())} />
+          </InfiniteScroll>
           {boxScroll() > 1000 && (
             <GoUp onClick={() => scrollTop()}>
               UP <HiArrowUp size={24} />
             </GoUp>
           )}
-        </InfiniteScroll>
+        </>
       )}
 
       {noResults && (

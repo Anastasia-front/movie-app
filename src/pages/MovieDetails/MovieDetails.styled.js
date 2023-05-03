@@ -16,7 +16,9 @@ export const MainInfo = styled.div`
 `;
 
 export const Addition = styled.div`
-  margin-left: 30px;
+  @media screen and (min-width: 950px) {
+    margin-left: 30px;
+  }
 `;
 
 export const Poster = styled.img`
@@ -26,7 +28,9 @@ export const Poster = styled.img`
 `;
 
 export const MainText = styled.div`
-  margin-left: 30px;
+  @media screen and (min-width: 950px) {
+    margin-left: 30px;
+  }
 `;
 
 export const AdditionsUl = styled.ul`
@@ -43,6 +47,7 @@ export const AdditionsLi = styled.li`
 `;
 export const Genres = styled.ul`
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   padding: 0;
 `;
