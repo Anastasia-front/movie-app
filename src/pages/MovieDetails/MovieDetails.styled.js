@@ -22,9 +22,12 @@ export const Addition = styled.div`
 `;
 
 export const Poster = styled.img`
-  max-width: 500px;
-  max-height: 400px;
   border-radius: 7px;
+  max-width: 520px;
+  max-height: 300px;
+  @media screen and (min-width: 950px) {
+    margin: auto;
+  }
 `;
 
 export const MainText = styled.div`

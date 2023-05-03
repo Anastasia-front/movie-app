@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import { BackLink } from 'components/BackLink/BackLink';
 import { getMovieById, STATUS } from 'serviceAPI/fetch';
-import { Container } from 'components/SharedLayout/SharedLayout.styled';
+
 import {
   FirstWrapper,
   MainInfo,
@@ -110,11 +110,6 @@ const MovieDetails = () => {
         pathname: backLinkHrefPathname,
         search: backLinkHrefSearch.locationSearch,
       };
-      // const paPathname =
-      //   (location.pathname === `/movies/${id}/cast` || `/movies/${id}/reviews`) &&
-      //   location.state.from.state.from.pathname === '/'
-      //     ? location.state.from.state.from.pathname
-      //     : '/movies';
     }
     if (location.state.from.state.from.state.from.state === null) {
       const locationSearch =
@@ -149,7 +144,7 @@ const MovieDetails = () => {
   return (
     <>
       {status === STATUS.resolved && (
-        <Container>
+        <>
           <BackLink to={backLink()}>Back to movies</BackLink>
           <FirstWrapper>
             <MainInfo>
@@ -204,7 +199,7 @@ const MovieDetails = () => {
               <Outlet />
             </Suspense>
           </FirstWrapper>
-        </Container>
+        </>
       )}
       {status === STATUS.rejected && (
         <h3>Something went wrong on API... The messege error `{error}`</h3>
