@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const GoUp = styled.button`
   position: fixed;
-  bottom: 100px;
+  bottom: 50px;
   left: 10px;
   background-color: rgb(136 74 9);
   color: #fff;
@@ -16,6 +16,7 @@ export const GoUp = styled.button`
   align-items: center;
   justify-content: center;
   @media screen and (min-width: 400px) {
+    bottom: 100px;
     left: 350px;
   }
   @media screen and (min-width: 500px) {

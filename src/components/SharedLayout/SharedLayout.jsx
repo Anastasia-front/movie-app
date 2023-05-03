@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import {
+  Wrapper,
   Container,
   Header,
   HeaderContainer,
@@ -14,7 +15,7 @@ import {
 
 export const SharedLayout = () => {
   return (
-    <>
+    <Wrapper>
       <Header>
         <HeaderContainer>
           <Logo>
@@ -42,6 +43,6 @@ export const SharedLayout = () => {
           Thanks for API <API>themoviedb.org</API>
         </Info>
       </Footer>
-    </>
+    </Wrapper>
   );
 };

@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 
+export const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
+
 export const Header = styled.header`
   width: 100%;
   border-bottom: 1px solid black;
@@ -23,6 +29,7 @@ export const HeaderContainer = styled.div`
   }
 `;
 export const Container = styled.div`
+  flex-shrink: 0;
   max-width: 900px;
   margin: 0 auto;
   padding: 0 30px 100px;
@@ -58,6 +65,8 @@ export const Icon = styled.span`
 `;
 
 export const Footer = styled.footer`
+  margin-top: auto;
+  flex-shrink: 0;
   border-top: 1px solid black;
   display: flex;
   flex-direction: column;

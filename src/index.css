@@ -10,6 +10,11 @@ body {
   position: relative;
   min-height: 100vh;
 }
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
@@ -21,9 +26,7 @@ a {
   cursor: pointer;
 }
 
-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+.infinite-scroll-component__outerdiv {
+  display: flex;
+  flex-shrink: 0;
 }

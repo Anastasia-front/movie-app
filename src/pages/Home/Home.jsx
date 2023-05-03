@@ -73,6 +73,7 @@ const Home = () => {
         <>
           <h1 style={{ fontSize: '20px' }}>Trending today</h1>
           <InfiniteScroll
+            style={{ overflow: 'visible' }}
             dataLength={movies.length}
             next={fetchMoreData}
             initialScrollY={JSON.parse(

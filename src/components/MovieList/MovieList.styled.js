@@ -4,6 +4,10 @@ export const ListUl = styled.ul`
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  ${
+    '' /* margin: 0 auto;
+  padding: 15px; */
+  }
 `;
 
 export const ListLi = styled.li`
@@ -33,6 +37,9 @@ export const Image = styled.img`
   height: 403px;
   display: block;
   border-bottom: 1px solid darkred;
+  @media screen and (max-width: 350px) {
+    height: 360px;
+  }
 `;
 export const Description = styled.div`
   position: absolute;
